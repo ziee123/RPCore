@@ -1,4 +1,4 @@
-name: RP-Core
+name: RPlugin
 version: 2.0.0
 main: com.rp.RPPlugin
 api-version: '1.20'
@@ -6,11 +6,35 @@ author: ziee123
 
 commands:
   rp:
-    description: Masuk mode MC - auto kunci fitur & hidden chat
+    description: Masuk mode MC - auto kunci fitur & hidden
     usage: /rp
+    permission: rplugin.rp
+    permission-message: §cKamu butuh permission rplugin.rp
   rplayer:
-    description: Masuk mode Player - auto kunci fitur & hidden chat
+    description: Masuk mode Player - auto kunci fitur & hidden
     usage: /rplayer
+    permission: rplugin.rplayer
+    permission-message: §cKamu butuh permission rplugin.rplayer
   ooc:
-    description: Balik ke mode OOC default (diatur LuckPerms)
-    usage: /ooc
+    description: Balik ke mode OOC default
+    usage: /ooc [pesan]
+    permission: rplugin.ooc
+    permission-message: §cKamu butuh permission rplugin.ooc
+
+permissions:
+  rplugin.rp:
+    description: Izin pakai /rp (MC)
+    default: op
+  rplugin.rplayer:
+    description: Izin pakai /rplayer (Player)
+    default: true
+  rplugin.ooc:
+    description: Izin pakai /ooc (Default)
+    default: true
+  rplugin.*:
+    description: Semua izin RPlugin
+    default: op
+    children:
+      rplugin.rp: true
+      rplugin.rplayer: true
+      rplugin.ooc: true
