@@ -21,21 +21,20 @@ public class RPPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         saveDefaultConfig();
         Bukkit.getPluginManager().registerEvents(this, this);
-        getLogger().info("RP-Core TOGGLE mode aktif!");
+        getLogger().info("RPlugin (rplugin.*) aktif!");
     }
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
-        // Kalo lagi mode RP / RPLAYER, chat nya jadi RP local otomatis, bukan global
         if (lockedPlayers.contains(p.getUniqueId())) {
             e.setCancelled(true);
-            String format = getConfig().getString("rp-format", "&7[MC] &e%player%&7: &f%message%")
+            String format = getConfig().getString("rp-format", "&7[RP] &e%player%&7: &f%message%")
                 .replace("%player%", p.getName()).replace("%message%", e.getMessage());
             sendLocal(p, format, getConfig().getInt("rp-distance", 15));
         } else {
             e.setCancelled(true);
-            p.sendMessage(ChatColor.RED + "Chat biasa mati. /rp | /rplayer | /ooc");
+            p.sendMessage(ChatColor.RED + "Chat biasa mati. Pakai /rp | /rplayer | /ooc");
         }
     }
 
@@ -45,7 +44,7 @@ public class RPPlugin extends JavaPlugin implements Listener {
         if (msg.startsWith("/rp") || msg.startsWith("/rplayer") || msg.startsWith("/ooc") || msg.startsWith("/login") || msg.startsWith("/register")) return;
         if (lockedPlayers.contains(e.getPlayer().getUniqueId())) {
             e.setCancelled(true);
-            e.getPlayer().sendMessage(ChatColor.GRAY + "Mode RP aktif! Fitur terkunci. /ooc buat balik.");
+            e.getPlayer().sendMessage(ChatColor.GRAY + "Mode RP aktif! Fitur terkunci. /ooc buat balik default.");
         }
     }
 
@@ -63,35 +62,40 @@ public class RPPlugin extends JavaPlugin implements Listener {
         Player p = (Player) sender;
 
         if (cmd.getName().equalsIgnoreCase("rp")) {
-            if (!p.hasPermission("rp.mc")) {
-                p.sendMessage(ChatColor.RED + "/rp khusus MC! Kamu pakai /rplayer");
+            if (!p.hasPermission("rplugin.rp")) {
+                p.sendMessage(ChatColor.RED + "Butuh rplugin.rp | /lp user " + p.getName() + " permission set rplugin.rp true");
                 return true;
             }
             lockedPlayers.add(p.getUniqueId());
-            p.sendMessage(ChatColor.GREEN + ">> MODE MC AKTIF << Fitur terkunci, chat hidden. Chat kamu sekarang jadi RP local. /ooc buat balik.");
+            p.sendMessage(ChatColor.GREEN + ">> MODE MC (rplugin.rp) AKTIF <<");
             return true;
         }
 
         if (cmd.getName().equalsIgnoreCase("rplayer")) {
+            if (!p.hasPermission("rplugin.rplayer")) {
+                p.sendMessage(ChatColor.RED + "Butuh rplugin.rplayer");
+                return true;
+            }
             lockedPlayers.add(p.getUniqueId());
-            p.sendMessage(ChatColor.GREEN + ">> MODE PLAYER AKTIF << Fitur terkunci, chat hidden. Chat kamu sekarang jadi RP local. /ooc buat balik.");
+            p.sendMessage(ChatColor.GREEN + ">> MODE PLAYER (rplugin.rplayer) AKTIF <<");
             return true;
         }
 
         if (cmd.getName().equalsIgnoreCase("ooc")) {
-            if (!p.hasPermission("rp.ooc")) {
-                p.sendMessage(ChatColor.RED + "No akses OOC. Set LuckPerms rp.ooc");
+            if (!p.hasPermission("rplugin.ooc")) {
+                p.sendMessage(ChatColor.RED + "Butuh rplugin.ooc");
                 return true;
             }
             lockedPlayers.remove(p.getUniqueId());
-            p.sendMessage(ChatColor.YELLOW + ">> MODE OOC (DEFAULT) << Balik normal. Fitur kebuka.");
-            if (args.length > 0) {
-                String msg = String.join(" ", args);
-                String format = ChatColor.translateAlternateColorCodes('&', getConfig().getString("ooc-format", "&8[OOC] &f%player%: &f%message%").replace("%player%", p.getName()).replace("%message%", msg));
-                for (Player online : Bukkit.getOnlinePlayers()) {
-                    if (lockedPlayers.contains(online.getUniqueId())) continue;
-                    online.sendMessage(format);
-                }
+            if (args.length == 0) {
+                p.sendMessage(ChatColor.YELLOW + ">> MODE OOC (rplugin.ooc) BALIK DEFAULT <<");
+                return true;
+            }
+            String msg = String.join(" ", args);
+            String format = ChatColor.translateAlternateColorCodes('&', getConfig().getString("ooc-format", "&8[OOC] &f%player%: &f%message%").replace("%player%", p.getName()).replace("%message%", msg));
+            for (Player online : Bukkit.getOnlinePlayers()) {
+                if (lockedPlayers.contains(online.getUniqueId())) continue;
+                online.sendMessage(format);
             }
             return true;
         }
@@ -103,9 +107,10 @@ public class RPPlugin extends JavaPlugin implements Listener {
         for (Player online : Bukkit.getOnlinePlayers()) {
             if (online.getWorld() != sender.getWorld()) continue;
             if (online.getLocation().distance(sender.getLocation()) > distance) continue;
-            if (lockedPlayers.contains(online.getUniqueId()) || online.equals(sender)) {
+            if (lockedPlayers.contains(online.getUniqueId())) {
                  online.sendMessage(colored);
             }
         }
+        Bukkit.getConsoleSender().sendMessage(colored);
     }
 }
