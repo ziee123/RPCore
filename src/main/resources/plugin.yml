@@ -1,0 +1,16 @@
+name: RP-Core
+version: 2.0.0
+main: com.rp.RPPlugin
+api-version: '1.20'
+author: ziee123
+
+commands:
+  rp:
+    description: Masuk mode MC - auto kunci fitur & hidden chat
+    usage: /rp
+  rplayer:
+    description: Masuk mode Player - auto kunci fitur & hidden chat
+    usage: /rplayer
+  ooc:
+    description: Balik ke mode OOC default (diatur LuckPerms)
+    usage: /ooc
