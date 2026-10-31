@@ -1,0 +1,28 @@
+# RPCore - Main Config (FIX)
+prefix: "&7[&bRPCore&7] "
+enabled: true
+debug: false
+
+# Database (kalo pake MySQL)
+database:
+  host: "localhost"
+  port: 3306
+  name: "rpcore"
+  user: "root"
+  password: ""
+
+# Chat Format
+chat:
+  ooc-format: "&7[OOC] {player}&8: &f{message}"
+  rp-format: "&f{player} &7{message}"
+  me-format: "&d* {player} {message}"
+
+# Bug Report
+bugreport:
+  enabled: true
+  format: "&a[BugReport] {player}: {message}"
+  save-to-file: true
+
+# RPlayer Settings
+rplayer:
+  save-inventory: true
